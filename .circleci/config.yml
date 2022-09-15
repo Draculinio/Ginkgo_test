@@ -1,0 +1,31 @@
+version: 2.1
+jobs:
+  build:
+    circleci_ip_ranges: true
+    working_directory: ~/Ginkgo_Test
+    docker:
+      - image: cimg/go:1.18
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: go get ./...
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      - run:
+          name: Create results folder
+          command: mkdir output
+      - run:
+          name: Run Tests
+          command: go test |& tee >(sed $'s/\033[[][^A-Za-z]*m//g' > ./output/test.txt)
+      - store_artifacts:
+          path: ./output
+      - run:
+          name: verify files
+          command: ls ./output/*.txt -l
+          
