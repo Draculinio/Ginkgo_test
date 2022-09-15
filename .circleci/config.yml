@@ -1,7 +1,7 @@
 version: 2.1
 jobs:
   build:
-    circleci_ip_ranges: true
+    #circleci_ip_ranges: true
     working_directory: ~/Ginkgo_Test
     docker:
       - image: cimg/go:1.18
